@@ -22,17 +22,65 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "DynamicRTSPServer.hh"
 #include "version.hh"
 
-int main(int argc, char** argv) {
+char g_listenAddr[129] = "\0";
+int g_listenPort = 554;
 
-	if (argv[1]) {
-		ReceivingInterfaceAddr = SendingInterfaceAddr = our_inet_addr(argv[1]);
+
+void showUsage(void)
+{
+	printf("Usage:\r\n");
+	printf("mediaServerEx [-listen_addr <ip>] [-listen_port <tcp port>] [-h]");
+	printf("\t-listen_addr\tIf multiple NICs present, listen on the one given, otherwise live555 decides based on Multicast routing (see docs).\r\n");
+	printf("\t-listen_port\tTCP Port on which the RTSP server is listening, default is 554\r\n");
+	printf("\t-h          \tShow this help\r\n");
+}
+
+int parseArgs(int argc, char** argv)
+{
+	if (argc == 1)
+	{
+		printf("Starting with default values. Add '-h' for additional help...");
+		return 0;
 	}
 
-	// Begin by setting up our usage environment:
+	for (int i = 1; i < argc; i++) 
+	{
+		if (argv[i] == NULL) break;
+
+		if (_stricmp("-listen_addr", argv[i]) == 0)
+		{
+			if (argv[++i] != NULL) strcpy_s(g_listenAddr, argv[i]);
+			else break;
+		}
+		if (_stricmp("-listen_port", argv[i]) == 0)
+		{
+			if (argv[++i] != NULL) g_listenPort = atoi(argv[i]);
+			else break;
+		}
+
+		if (_stricmp("-h", argv[i]) == 0)
+		{
+			showUsage();
+			return 1;
+		}
+	}
+
+	return 0;
+}
+
+int main(int argc, char** argv) 
+{
+	// failed to parse args or show help
+	if (parseArgs(argc, argv) != 0) return 1;
+
+	if (strlen(g_listenAddr) > 0) ReceivingInterfaceAddr = SendingInterfaceAddr = our_inet_addr(g_listenAddr);
+	portNumBits rtspServerPortNum = g_listenPort;
+
+	RTSPServer* rtspServer = NULL;
 	TaskScheduler* scheduler = BasicTaskScheduler::createNew();
 	UsageEnvironment* env = BasicUsageEnvironment::createNew(*scheduler);
-
 	UserAuthenticationDatabase* authDB = NULL;
+
 #ifdef ACCESS_CONTROL
 	// To implement client access control to the RTSP server, do the following:
 	authDB = new UserAuthenticationDatabase;
@@ -41,18 +89,12 @@ int main(int argc, char** argv) {
 	// access to the server.
 #endif
 
-  // Create the RTSP server.  Try first with the default port number (554),
-  // and then with the alternative port number (8554):
-	RTSPServer* rtspServer;
-	portNumBits rtspServerPortNum = 554;
+	// Create the RTSP server.
 	rtspServer = DynamicRTSPServer::createNew(*env, rtspServerPortNum, authDB);
-	if (rtspServer == NULL) {
-		rtspServerPortNum = 8554;
-		rtspServer = DynamicRTSPServer::createNew(*env, rtspServerPortNum, authDB);
-	}
-	if (rtspServer == NULL) {
+	if (rtspServer == NULL) 
+	{
 		*env << "Failed to create RTSP server: " << env->getResultMsg() << "\n";
-		exit(1);
+		return 10;
 	}
 
 	*env << "LIVE555 Media Server\n";
@@ -86,10 +128,14 @@ int main(int argc, char** argv) {
 	// Try first with the default HTTP port (80), and then with the alternative HTTP
 	// port numbers (8000 and 8080).
 
-	if (rtspServer->setUpTunnelingOverHTTP(80) || rtspServer->setUpTunnelingOverHTTP(8000) || rtspServer->setUpTunnelingOverHTTP(8080)) {
+	if (rtspServer->setUpTunnelingOverHTTP(80) || 
+		rtspServer->setUpTunnelingOverHTTP(8000) || 
+		rtspServer->setUpTunnelingOverHTTP(8080)) 
+	{
 		*env << "(We use port " << rtspServer->httpServerPortNum() << " for optional RTSP-over-HTTP tunneling, or for HTTP live streaming (for indexed Transport Stream files only).)\n";
 	}
-	else {
+	else 
+	{
 		*env << "(RTSP-over-HTTP tunneling is not available.)\n";
 	}
 
