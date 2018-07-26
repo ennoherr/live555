@@ -1,7 +1,7 @@
 /**********
 This library is free software; you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by the
-Free Software Foundation; either version 2.1 of the License, or (at your
+Free Software Foundation; either version 3 of the License, or (at your
 option) any later version. (See <http://www.gnu.org/copyleft/lesser.html>.)
 
 This library is distributed in the hope that it will be useful, but WITHOUT
@@ -13,15 +13,21 @@ You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
-// Copyright (c) 1996-2016, Live Networks, Inc.  All rights reserved
+// Copyright (c) 1996-2018, Live Networks, Inc.  All rights reserved
 // LIVE555 Media Server
 // main program
 
 #include <BasicUsageEnvironment.hh>
+#include <GroupsockHelper.hh>
 #include "DynamicRTSPServer.hh"
 #include "version.hh"
 
 int main(int argc, char** argv) {
+  
+  if (argv[1]) {
+    ReceivingInterfaceAddr = SendingInterfaceAddr = our_inet_addr(argv[1]);
+  }
+
   // Begin by setting up our usage environment:
   TaskScheduler* scheduler = BasicTaskScheduler::createNew();
   UsageEnvironment* env = BasicUsageEnvironment::createNew(*scheduler);

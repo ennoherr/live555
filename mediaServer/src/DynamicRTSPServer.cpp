@@ -1,7 +1,7 @@
 /**********
 This library is free software; you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by the
-Free Software Foundation; either version 2.1 of the License, or (at your
+Free Software Foundation; either version 3 of the License, or (at your
 option) any later version. (See <http://www.gnu.org/copyleft/lesser.html>.)
 
 This library is distributed in the hope that it will be useful, but WITHOUT
@@ -13,7 +13,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
-// Copyright (c) 1996-2016, Live Networks, Inc.  All rights reserved
+// Copyright (c) 1996-2018, Live Networks, Inc.  All rights reserved
 // A subclass of "RTSPServer" that creates "ServerMediaSession"s on demand,
 // based on whether or not the specified stream name exists as a file
 // Implementation
@@ -77,6 +77,8 @@ ServerMediaSession* DynamicRTSPServer
     }
 
     fclose(fid);
+
+    printf("end session %s\r\n", streamName);
     return sms;
   }
 }
@@ -138,12 +140,12 @@ static ServerMediaSession* createNewSMS(UsageEnvironment& env,
   } else if (strcmp(extension, ".264") == 0) {
     // Assumed to be a H.264 Video Elementary Stream file:
     NEW_SMS("H.264 Video");
-    OutPacketBuffer::maxSize = 100000; // allow for some possibly large H.264 frames
+    OutPacketBuffer::maxSize = 500000; // allow for some possibly large H.264 frames
     sms->addSubsession(H264VideoFileServerMediaSubsession::createNew(env, fileName, reuseSource));
   } else if (strcmp(extension, ".265") == 0) {
     // Assumed to be a H.265 Video Elementary Stream file:
     NEW_SMS("H.265 Video");
-    OutPacketBuffer::maxSize = 100000; // allow for some possibly large H.265 frames
+    OutPacketBuffer::maxSize = 500000; // allow for some possibly large H.265 frames
     sms->addSubsession(H265VideoFileServerMediaSubsession::createNew(env, fileName, reuseSource));
   } else if (strcmp(extension, ".mp3") == 0) {
     // Assumed to be a MPEG-1 or 2 Audio file:
@@ -205,7 +207,7 @@ static ServerMediaSession* createNewSMS(UsageEnvironment& env,
     sms->addSubsession(DVVideoFileServerMediaSubsession::createNew(env, fileName, reuseSource));
   } else if (strcmp(extension, ".mkv") == 0 || strcmp(extension, ".webm") == 0) {
     // Assumed to be a Matroska file (note that WebM ('.webm') files are also Matroska files)
-    OutPacketBuffer::maxSize = 100000; // allow for some possibly large VP8 or VP9 frames
+    OutPacketBuffer::maxSize = 500000; // allow for some possibly large VP8 or VP9 frames
     NEW_SMS("Matroska video+audio+(optional)subtitles");
 
     // Create a Matroska file server demultiplexor for the specified file.
