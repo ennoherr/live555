@@ -24,10 +24,6 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 
 int main(int argc, char** argv) {
   
-  if (argv[1]) {
-    ReceivingInterfaceAddr = SendingInterfaceAddr = our_inet_addr(argv[1]);
-  }
-
   // Begin by setting up our usage environment:
   TaskScheduler* scheduler = BasicTaskScheduler::createNew();
   UsageEnvironment* env = BasicUsageEnvironment::createNew(*scheduler);

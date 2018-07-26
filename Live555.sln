@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2042
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "liveMedia", "liveMedia\liveMedia.vcxproj", "{BC3DC036-59E1-44C4-9A02-B4AB8777809A}"
 EndProject
@@ -44,6 +44,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "openRTSP", "openRTSP\openRT
 		{C4AAED7B-5A48-43F0-A688-A7F497ED87CC} = {C4AAED7B-5A48-43F0-A688-A7F497ED87CC}
 		{48AF4C98-619E-4A68-9AD7-26E425FDAE87} = {48AF4C98-619E-4A68-9AD7-26E425FDAE87}
 	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mediaServerEx", "mediaServerEx\mediaServerEx.vcxproj", "{8E028390-20C8-4134-81E0-EE8328E6C4EE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -117,6 +119,14 @@ Global
 		{04F6704C-E98F-42DE-87CF-8152066186D6}.Release|x64.Build.0 = Release|x64
 		{04F6704C-E98F-42DE-87CF-8152066186D6}.Release|x86.ActiveCfg = Release|Win32
 		{04F6704C-E98F-42DE-87CF-8152066186D6}.Release|x86.Build.0 = Release|Win32
+		{8E028390-20C8-4134-81E0-EE8328E6C4EE}.Debug|x64.ActiveCfg = Debug|x64
+		{8E028390-20C8-4134-81E0-EE8328E6C4EE}.Debug|x64.Build.0 = Debug|x64
+		{8E028390-20C8-4134-81E0-EE8328E6C4EE}.Debug|x86.ActiveCfg = Debug|Win32
+		{8E028390-20C8-4134-81E0-EE8328E6C4EE}.Debug|x86.Build.0 = Debug|Win32
+		{8E028390-20C8-4134-81E0-EE8328E6C4EE}.Release|x64.ActiveCfg = Release|x64
+		{8E028390-20C8-4134-81E0-EE8328E6C4EE}.Release|x64.Build.0 = Release|x64
+		{8E028390-20C8-4134-81E0-EE8328E6C4EE}.Release|x86.ActiveCfg = Release|Win32
+		{8E028390-20C8-4134-81E0-EE8328E6C4EE}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -124,5 +134,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{4DBE4E40-8F8C-49B4-ABCD-603162BCE08F} = {07F59D5B-7988-48D7-8887-213840C27849}
 		{04F6704C-E98F-42DE-87CF-8152066186D6} = {07F59D5B-7988-48D7-8887-213840C27849}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {657069E0-9AAF-47BC-9D89-9C49D32626BC}
 	EndGlobalSection
 EndGlobal
