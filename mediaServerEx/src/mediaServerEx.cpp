@@ -29,10 +29,12 @@ int g_listenPort = 554;
 void showUsage(void)
 {
 	printf("Usage:\r\n");
-	printf("mediaServerEx [-listen_addr <ip>] [-listen_port <tcp port>] [-h]");
+	printf("mediaServerEx [-listen_addr <ip>] [-listen_port <tcp port>] [-h]\r\n");
+	printf("\r\n");
 	printf("\t-listen_addr\tIf multiple NICs present, listen on the one given, otherwise live555 decides based on Multicast routing (see docs).\r\n");
 	printf("\t-listen_port\tTCP Port on which the RTSP server is listening, default is 554\r\n");
 	printf("\t-h          \tShow this help\r\n");
+	printf("\r\n");
 }
 
 int parseArgs(int argc, char** argv)
@@ -50,18 +52,18 @@ int parseArgs(int argc, char** argv)
 		if (_stricmp("-listen_addr", argv[i]) == 0)
 		{
 			if (argv[++i] != NULL) strcpy_s(g_listenAddr, argv[i]);
-			else break;
+			else return 1;
 		}
 		if (_stricmp("-listen_port", argv[i]) == 0)
 		{
 			if (argv[++i] != NULL) g_listenPort = atoi(argv[i]);
-			else break;
+			else return 2;
 		}
 
 		if (_stricmp("-h", argv[i]) == 0)
 		{
 			showUsage();
-			return 1;
+			return -1;
 		}
 	}
 
