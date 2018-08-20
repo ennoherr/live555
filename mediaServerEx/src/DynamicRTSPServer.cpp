@@ -131,20 +131,22 @@ char const* descStr = description\
 sms = ServerMediaSession::createNew(env, fileName, fileName, descStr);\
 } while(0)
 
-static ServerMediaSession* createNewSMS(UsageEnvironment& env,
-	char const* fileName, FILE* /*fid*/) {
+static ServerMediaSession* createNewSMS(UsageEnvironment& env, char const* fileName, FILE* /*fid*/) 
+{
 	// Use the file name extension to determine the type of "ServerMediaSession":
 	char const* extension = strrchr(fileName, '.');
 	if (extension == NULL) return NULL;
 
 	ServerMediaSession* sms = NULL;
 	Boolean const reuseSource = False;
-	if (strcmp(extension, ".aac") == 0) {
+	if (strcmp(extension, ".aac") == 0) 
+	{
 		// Assumed to be an AAC Audio (ADTS format) file:
 		NEW_SMS("AAC Audio");
 		sms->addSubsession(ADTSAudioFileServerMediaSubsession::createNew(env, fileName, reuseSource));
 	}
-	else if (strcmp(extension, ".amr") == 0) {
+	else if (strcmp(extension, ".amr") == 0) 
+	{
 		// Assumed to be an AMR Audio file:
 		NEW_SMS("AMR Audio");
 		sms->addSubsession(AMRAudioFileServerMediaSubsession::createNew(env, fileName, reuseSource));
