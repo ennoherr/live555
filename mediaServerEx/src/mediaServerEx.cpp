@@ -24,15 +24,17 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 
 char g_listenAddr[129] = "\0";
 int g_listenPort = 554;
+int g_listenPortHttp = 80;
 
 
 void showUsage(void)
 {
 	printf("Usage:\r\n");
-	printf("mediaServerEx [-listen_addr <ip>] [-listen_port <tcp port>] [-h]\r\n");
+	printf("mediaServerEx [-listen_addr <ip>] [-listen_port <tcp port>] [-listen_port_http <tcp port>] [-h]\r\n");
 	printf("\r\n");
 	printf("\t-listen_addr\tIf multiple NICs present, listen on the one given, otherwise live555 decides based on Multicast routing (see docs).\r\n");
 	printf("\t-listen_port\tTCP Port on which the RTSP server is listening, default is 554\r\n");
+	printf("\t-listen_port_http\tTCP Port on which the RTSP over HTTP server is listening, default is 80\r\n");
 	printf("\t-h          \tShow this help\r\n");
 	printf("\r\n");
 }
@@ -58,6 +60,11 @@ int parseArgs(int argc, char** argv)
 		{
 			if (argv[++i] != NULL) g_listenPort = atoi(argv[i]);
 			else return 2;
+		}
+		if (_stricmp("-listen_port_http", argv[i]) == 0)
+		{
+			if (argv[++i] != NULL) g_listenPortHttp = atoi(argv[i]);
+			else return 3;
 		}
 
 		if (_stricmp("-h", argv[i]) == 0)
@@ -107,32 +114,30 @@ int main(int argc, char** argv)
 	char* urlPrefix = rtspServer->rtspURLPrefix();
 	*env << "Play streams from this server using the URL\n\t"
 		<< urlPrefix << "<filename>\nwhere <filename> is a file present in the current directory.\n";
-	*env << "Each file's type is inferred from its name suffix:\n";
-	*env << "\t\".264\" => a H.264 Video Elementary Stream file\n";
-	*env << "\t\".265\" => a H.265 Video Elementary Stream file\n";
-	*env << "\t\".aac\" => an AAC Audio (ADTS format) file\n";
-	*env << "\t\".ac3\" => an AC-3 Audio file\n";
-	*env << "\t\".amr\" => an AMR Audio file\n";
-	*env << "\t\".dv\" => a DV Video file\n";
-	*env << "\t\".m4e\" => a MPEG-4 Video Elementary Stream file\n";
-	*env << "\t\".mkv\" => a Matroska audio+video+(optional)subtitles file\n";
-	*env << "\t\".mp3\" => a MPEG-1 or 2 Audio file\n";
-	*env << "\t\".mpg\" => a MPEG-1 or 2 Program Stream (audio+video) file\n";
-	*env << "\t\".ogg\" or \".ogv\" or \".opus\" => an Ogg audio and/or video file\n";
-	*env << "\t\".ts\" => a MPEG Transport Stream file\n";
-	*env << "\t\t(a \".tsx\" index file - if present - provides server 'trick play' support)\n";
-	*env << "\t\".vob\" => a VOB (MPEG-2 video with AC-3 audio) file\n";
-	*env << "\t\".wav\" => a WAV Audio file\n";
-	*env << "\t\".webm\" => a WebM audio(Vorbis)+video(VP8) file\n";
-	*env << "See http://www.live555.com/mediaServer/ for additional documentation.\n";
+	//*env << "Each file's type is inferred from its name suffix:\n";
+	//*env << "\t\".264\" => a H.264 Video Elementary Stream file\n";
+	//*env << "\t\".265\" => a H.265 Video Elementary Stream file\n";
+	//*env << "\t\".aac\" => an AAC Audio (ADTS format) file\n";
+	//*env << "\t\".ac3\" => an AC-3 Audio file\n";
+	//*env << "\t\".amr\" => an AMR Audio file\n";
+	//*env << "\t\".dv\" => a DV Video file\n";
+	//*env << "\t\".m4e\" => a MPEG-4 Video Elementary Stream file\n";
+	//*env << "\t\".mkv\" => a Matroska audio+video+(optional)subtitles file\n";
+	//*env << "\t\".mp3\" => a MPEG-1 or 2 Audio file\n";
+	//*env << "\t\".mpg\" => a MPEG-1 or 2 Program Stream (audio+video) file\n";
+	//*env << "\t\".ogg\" or \".ogv\" or \".opus\" => an Ogg audio and/or video file\n";
+	//*env << "\t\".ts\" => a MPEG Transport Stream file\n";
+	//*env << "\t\t(a \".tsx\" index file - if present - provides server 'trick play' support)\n";
+	//*env << "\t\".vob\" => a VOB (MPEG-2 video with AC-3 audio) file\n";
+	//*env << "\t\".wav\" => a WAV Audio file\n";
+	//*env << "\t\".webm\" => a WebM audio(Vorbis)+video(VP8) file\n";
+	//*env << "See http://www.live555.com/mediaServer/ for additional documentation.\n";
 
 	// Also, attempt to create a HTTP server for RTSP-over-HTTP tunneling.
 	// Try first with the default HTTP port (80), and then with the alternative HTTP
 	// port numbers (8000 and 8080).
 
-	if (rtspServer->setUpTunnelingOverHTTP(80) || 
-		rtspServer->setUpTunnelingOverHTTP(8000) || 
-		rtspServer->setUpTunnelingOverHTTP(8080)) 
+	if (rtspServer->setUpTunnelingOverHTTP(g_listenPortHttp))
 	{
 		*env << "(We use port " << rtspServer->httpServerPortNum() << " for optional RTSP-over-HTTP tunneling, or for HTTP live streaming (for indexed Transport Stream files only).)\n";
 	}
